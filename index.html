@@ -227,37 +227,15 @@ button{
 </div>
 
 <div>
-<label>Talla</label>
-<select id="talla">
-<option value="">Seleccionar</option>
-<option>XS</option>
-<option>S</option>
-<option>M</option>
-<option>L</option>
-<option>XL</option>
-<option>XXL</option>
-<option>28</option>
-<option>30</option>
-<option>32</option>
-<option>34</option>
-<option>36</option>
-<option>38</option>
-<option>40</option>
-</select>
+<div>
+  <label>Costo</label>
+  <input id="costo" type="number" placeholder="Ej. 400">
 </div>
 
 <div>
-<label>Color</label>
-<input id="color" type="text" placeholder="Ej. Blanco">
+  <label>Existencia</label>
+  <input id="existencia" type="number" placeholder="0">
 </div>
-
-<div>
-<label>Existencia</label>
-<input id="existencia" type="number" placeholder="0">
-</div>
-
-</div>
-
 <div class="actions">
 <button class="btn-black" onclick="agregarProducto()">
 Agregar producto
@@ -338,8 +316,7 @@ function agregarProducto(){
 
   const nombre = document.getElementById("producto").value.trim();
   const precio = Number(document.getElementById("precio").value);
-  const talla = document.getElementById("talla").value;
-  const color = document.getElementById("color").value.trim();
+  const costo = Number(document.getElementById("costo").value);
   const existencia = Number(document.getElementById("existencia").value);
 
   if(!nombre){
@@ -352,11 +329,6 @@ function agregarProducto(){
     return;
   }
 
-  if(!talla){
-    alert("Selecciona una talla.");
-    return;
-  }
-
   if(existencia <= 0){
     alert("Ingresa la existencia.");
     return;
@@ -365,9 +337,8 @@ function agregarProducto(){
   const producto = {
     id: Date.now(),
     nombre,
+    costo,
     precio,
-    talla,
-    color,
     existencia
   };
 
@@ -378,8 +349,6 @@ function agregarProducto(){
 
   document.getElementById("producto").value="";
   document.getElementById("precio").value="";
-  document.getElementById("talla").value="";
-  document.getElementById("color").value="";
   document.getElementById("existencia").value="";
 }
 
@@ -409,11 +378,10 @@ function mostrarProductos(){
     div.innerHTML = `
       <div class="product-info">
         <strong>${producto.nombre}</strong>
-        <small>
-          Talla: ${producto.talla}
-          ${producto.color ? " | Color: " + producto.color : ""}
-          | Stock: ${producto.existencia}
-        </small>
+       <small>
+  Costo: C$ ${producto.costo.toLocaleString()}
+  | Stock: ${producto.existencia}
+</small>
       </div>
 
       <div>
@@ -506,8 +474,6 @@ function actualizarCarrito(){
         <strong>${item.nombre}</strong>
         <br>
         <small>
-          ${item.talla}
-          ${item.color ? " | " + item.color : ""}
           <br>
           Cantidad: ${item.cantidad}
         </small>
