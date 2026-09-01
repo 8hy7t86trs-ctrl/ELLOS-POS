@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELLOS POS</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f4f4;
+      color: #111;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    header span {
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .container {
+      padding: 24px;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    .status {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    .status h2 {
+      margin-top: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+
+    .number {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 16px;
+      background: #111;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .85;
+    }
+
+    .secondary {
+      background: #e9e9e9;
+      color: #111;
+    }
+
+    #mensaje {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .ok {
+      background: #d9f7df;
+      color: #176b2c;
+    }
+
+    .error {
+      background: #ffdede;
+      color: #9b1c1c;
+    }
+
+    @media(max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .menu {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>ELLOS POS</h1>
+  <span>Punto de Venta • Ellos Closet</span>
+</header>
+
+<div class="container">
+
+  <div class="status">
+    <h2>Panel principal</h2>
+    <p id="conexion">Preparando conexión con Supabase...</p>
+    <div id="mensaje"></div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>Ventas de hoy</h3>
+      <div class="number" id="ventasHoy">C$ 0</div>
+    </div>
+
+    <div class="card">
+      <h3>Productos</h3>
+      <div class="number" id="productos">0</div>
+    </div>
+
+    <div class="card">
+      <h3>Existencias</h3>
+      <div class="number" id="existencias">0</div>
+    </div>
+
+    <div class="card">
+      <h3>Caja</h3>
+      <div class="number" id="caja">C$ 0</div>
+    </div>
+
+  </div>
+
+  <div class="menu">
+
+    <button onclick="irVentas()">
+      🛒 NUEVA VENTA
+    </button>
+
+    <button onclick="irInventario()">
+      📦 INVENTARIO
+    </button>
+
+    <button onclick="irProductos()">
+      👕 PRODUCTOS
+    </button>
+
+    <button onclick="irClientes()">
+      👤 CLIENTES
+    </button>
+
+    <button onclick="irCaja()">
+      💰 CAJA
+    </button>
+
+    <button onclick="irReportes()">
+      📊 REPORTES
+    </button>
+
+    <button class="secondary" onclick="probarConexion()">
+      🔄 PROBAR CONEXIÓN
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+  /*
+    ==================================================
+    CONFIGURACIÓN SUPABASE
+    ==================================================
+
+    AQUÍ colocaremos posteriormente:
+    - URL de Supabase
+    - Anon Public Key
+
+    NO coloques aquí la Service Role Key.
+  */
+
+  const SUPABASE_URL = "PONER_AQUI_URL_SUPABASE";
+  const SUPABASE_ANON_KEY = "PONER_AQUI_ANON_KEY";
+
+
+  function mostrarMensaje(texto, tipo) {
+
+    const elemento = document.getElementById("mensaje");
+
+    elemento.textContent = texto;
+    elemento.className = tipo;
+    elemento.style.display = "block";
+
+  }
+
+
+  function probarConexion() {
+
+    const conexion = document.getElementById("conexion");
+
+    if (
+      SUPABASE_URL === "PONER_AQUI_URL_SUPABASE" ||
+      SUPABASE_ANON_KEY === "PONER_AQUI_ANON_KEY"
+    ) {
+
+      conexion.textContent =
+        "Supabase todavía no está configurado.";
+
+      mostrarMensaje(
+        "Falta colocar la URL y la clave pública de Supabase.",
+        "error"
+      );
+
+      return;
+    }
+
+    conexion.textContent =
+      "Configuración de Supabase encontrada.";
+
+    mostrarMensaje(
+      "La configuración está lista para conectarse.",
+      "ok"
+    );
+
+  }
+
+
+  function irVentas() {
+    alert("Módulo de ventas — lo construiremos ahora.");
+  }
+
+  function irInventario() {
+    alert("Módulo de inventario — lo construiremos después.");
+  }
+
+  function irProductos() {
+    alert("Módulo de productos — lo construiremos después.");
+  }
+
+  function irClientes() {
+    alert("Módulo de clientes — lo construiremos después.");
+  }
+
+  function irCaja() {
+    alert("Módulo de caja — lo construiremos después.");
+  }
+
+  function irReportes() {
+    alert("Módulo de reportes — lo construiremos después.");
+  }
+
+</script>
+
+</body>
+</html>
