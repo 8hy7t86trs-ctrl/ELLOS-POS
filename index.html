@@ -564,7 +564,29 @@ function prepararTicket(){
 
   const descuento = 0;
   const total = subtotal - descuento;
+  // DESCONTAR STOCK AL REALIZAR LA VENTA
+for (const item of carrito) {
+    const producto = productos.find(p => p.id === item.id);
 
+    if (!producto) {
+        alert("No se encontró el producto.");
+        return;
+    }
+
+    if (Number(item.cantidad) > Number(producto.existencia)) {
+        alert("No hay suficiente stock de " + producto.nombre);
+        return;
+    }
+}
+
+carrito.forEach(item => {
+    const producto = productos.find(p => p.id === item.id);
+    producto.existencia =
+        Number(producto.existencia) - Number(item.cantidad);
+});
+
+guardarDatos();
+mostrarProductos();
   let contenido = `
     <div class="ticket">
       <h2>ELLOS POS</h2>
@@ -680,6 +702,8 @@ function prepararTicket(){
   `);
 
   ventana.document.close();
+  carrito = [];
+actualizarCarrito();
 }
 
 
